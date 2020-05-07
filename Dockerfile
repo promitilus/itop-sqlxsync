@@ -4,5 +4,7 @@ COPY [ ".", "/app" ]
 
 WORKDIR "/app"
 
+VOLUME /conf /conf
+
 # By default we wait for docker exec
 CMD [ "tail", "-f", "/dev/null" ]

@@ -1,5 +1,5 @@
 data/
-collectors/config.yaml
-collectors/params.distrib.xml
+conf/params.local.xml
+conf/config.yaml
 config.yaml
 

@@ -6,7 +6,7 @@ class SQLXCollectorConfig extends Utils {
 	static $collectors;
 
 	public static function loadConfig() {
-		$cfg = APPROOT . '/collectors/' . 'config.yaml';
+		$cfg = APPROOT . '/conf/' . 'config.yaml';
 
 		if (isset($_SERVER['SQL_COLLECTOR_CONFIG']))
 			$cfg = $_SERVER['SQL_COLLECTOR_CONFIG'];
