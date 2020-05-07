@@ -1,0 +1,93 @@
+#!/bin/bash
+
+BN=`basename $0`;
+DN=`dirname $0`;
+
+arg_list=0;
+arg_all=0;
+arg_collect=0;
+arg_synchro=0;
+arg_sources=();
+for arg in "$@";
+do
+	case "$arg" in
+		"-l" | "--list")	arg_list=1
+			;;
+		"-a" | "--all")
+			arg_all=1
+			;;
+		"-h")
+			echo "usage: $BN [ --l | --all ]" >&2;
+			echo "       $BN <source-name> [ --collect | --synchro ]" >&2;
+			exit 1;
+			;;
+		"-c" | "--collect" )
+			arg_collect=1;
+			;;
+		"-s" | "--sync" | "--synchro" )
+			arg_synchro=1;
+			;;
+		-*)
+			echo "ERROR: unknown argument '$arg'" >&2;
+			exit 1;
+			;;
+		*)
+			arg_sources+=("$arg");
+			;;
+	esac;
+done;
+
+function exec_sync() {
+	php "$DN/exec.php" "$@";
+}
+
+set -u;
+
+ARGS=();
+if [ "$arg_list" = "1" ];
+then
+	SQL_COLLECTOR_LIST=1 exec_sync;
+	exit $?;
+fi;
+
+if [ "$arg_all" = "1" ];
+then
+	sources=`SQL_COLLECTOR_LIST=1 exec_sync`;
+
+	for src in $sources;
+	do
+		arg_sources+=("$src");
+	done;
+fi;
+
+if [ "${#arg_sources[@]}" -gt 1 ] && ([ "$arg_collect" = "1" ] || [ "$arg_synchro" = "1" ]);
+then
+	echo "$BN: can not combine --collect or --synchro with multiple sources !">&2;
+	exit 1;
+fi;
+
+if [ "$arg_collect" = "1" ] && [ "$arg_synchro" != "1" ];
+then
+	ARGS+=("--collect_only");
+elif [ "$arg_synchro" = "1" ] && [ "$arg_collect" != "1" ];
+then
+	ARGS+=("--synchro_only");
+fi;
+
+# process
+for src in "${arg_sources[@]}";
+do
+	if [ "$arg_synchro" != "1" ];
+	then
+		rm -f $DN/data/.source $DN/data/*.txt $DN/data/*;
+		echo "$src" >$DN/data/.source;
+	else
+		read data_src < $DN/data/.source;
+		if [ "$data_src" != "$src" ];
+		then
+			echo "$BN: collected data source ($data_src) does not match synchro source ($src) !" >&2;
+			exit 1;
+		fi;
+	fi;
+	SQL_COLLECTOR_SOURCE="$src" exec_sync "${ARGS[@]}";
+done;
