@@ -79,6 +79,7 @@ for src in "${arg_sources[@]}";
 do
 	if [ "$arg_synchro" != "1" ];
 	then
+		mkdir -p "$DN/data";
 		rm -f $DN/data/.source $DN/data/*.txt $DN/data/*;
 		echo "$src" >$DN/data/.source;
 	else

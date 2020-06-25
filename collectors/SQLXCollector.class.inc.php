@@ -135,7 +135,12 @@ abstract class SQLXCollector extends Collector
 
 		// connect
 		Utils::Log(LOG_INFO, sprintf("Connecting to %s.", $config['db']['dsn']));
-		$dbh = new PDO($config['db']['dsn'], $config['db']['user'] ?? NULL, $config['db']['password'] ?? NULL);
+		$dbh = new PDO($config['db']['dsn'],
+				$config['db']['user'] ?? NULL, $config['db']['password'] ?? NULL,
+				array(
+					PDO::ATTR_TIMEOUT => 15, // in seconds
+					PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+				));
 		if (!$dbh)
 			throw new Exception("Failed to connect to DB with " . $config['dsn']);
 		Utils::Log(LOG_INFO, sprintf("Connected to %s.", $config['db']['dsn']));
