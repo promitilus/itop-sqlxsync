@@ -20,6 +20,8 @@ require_once(APPROOT.'collectors/SQLXPhysicalInterfaceCollector.class.inc.php');
 require_once(APPROOT.'collectors/SQLXVirtualMachineCollector.class.inc.php');
 require_once(APPROOT.'collectors/SQLXVirtualApplicationCollector.class.inc.php');
 require_once(APPROOT.'collectors/SQLXlnkApplicationSolutionToFunctionalCICollector.class.inc.php');
+require_once(APPROOT.'collectors/SQLXHardDiskTypeCollector.class.inc.php');
+require_once(APPROOT.'collectors/SQLXHardDiskCollector.class.inc.php');
 
 // Register the collectors (one collector class per data synchro task to run)
 // and tell the orchestrator in which order to run them
