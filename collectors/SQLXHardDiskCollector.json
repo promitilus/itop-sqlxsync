@@ -64,6 +64,15 @@
 			"update_policy": "master_locked",
 			"finalclass": "SynchroAttribute",
 			"friendlyname": "filesystem"
+		},
+		{
+			"attcode": "system_id",
+			"update": "1",
+			"reconcile": "0",
+			"update_policy": "master_locked",
+			"reconciliation_attcode": "USKC",
+			"finalclass": "SynchroAttExtKey",
+			"friendlyname": "system_id"
 		}
 	],
 	"user_delete_policy": "administrators",
