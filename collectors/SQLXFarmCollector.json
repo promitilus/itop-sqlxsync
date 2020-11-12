@@ -153,6 +153,54 @@
 			"reconciliation_attcode": "name",
 			"finalclass": "SynchroAttExtKey",
 			"friendlyname": "location_id"
+		},
+		{
+			"attcode": "available_cpu",
+			"update": "1",
+			"reconcile": "0",
+			"update_policy": "master_locked",
+			"finalclass": "SynchroAttribute",
+			"friendlyname": "available_cpu"
+		},
+		{
+			"attcode": "available_ram",
+			"update": "1",
+			"reconcile": "0",
+			"update_policy": "master_locked",
+			"finalclass": "SynchroAttribute",
+			"friendlyname": "available_ram"
+		},
+		{
+			"attcode": "available_storage",
+			"update": "1",
+			"reconcile": "0",
+			"update_policy": "master_locked",
+			"finalclass": "SynchroAttribute",
+			"friendlyname": "available_storage"
+		},
+		{
+			"attcode": "allocated_cpu",
+			"update": "1",
+			"reconcile": "0",
+			"update_policy": "master_locked",
+			"finalclass": "SynchroAttribute",
+			"friendlyname": "allocated_cpu"
+		},
+		{
+			"attcode": "allocated_ram",
+			"update": "1",
+			"reconcile": "0",
+			"update_policy": "master_locked",
+			"finalclass": "SynchroAttribute",
+			"friendlyname": "allocated_ram"
+		},
+		{
+			"attcode": "allocated_storage",
+			"update": "1",
+			"reconcile": "0",
+			"update_policy": "master_locked",
+			"finalclass": "SynchroAttribute",
+			"friendlyname": "allocated_storage"
 		}
 	],
 	"user_delete_policy": "administrators",
