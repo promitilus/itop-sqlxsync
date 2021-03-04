@@ -13,7 +13,7 @@
 	"action_on_one": "update",
 	"action_on_multiple": "error",
 	"delete_policy": "update",
-	"delete_policy_update": "status:obsolete",
+	"delete_policy_update": "status:obsolete;",
 	"delete_policy_retention": "1728000",
 	"attribute_list": [
 		{

@@ -13,7 +13,7 @@
 	"action_on_one": "update",
 	"action_on_multiple": "error",
 	"delete_policy": "update",
-	"delete_policy_update": "status:obsolete;ram:0;cpu:0;storage:0",
+	"delete_policy_update": "status:obsolete;ram:0;cpu:0;storage:0;power_state:off",
 	"delete_policy_retention": "",
 	"attribute_list": [
 		{
@@ -153,6 +153,15 @@
 			"reconciliation_attcode": "name",
 			"finalclass": "SynchroAttExtKey",
 			"friendlyname": "org_id"
+		},
+		{
+			"attcode": "virtualmachinetype_id",
+			"update": "1",
+			"reconcile": "0",
+			"update_policy": "master_locked",
+			"reconciliation_attcode": "name",
+			"finalclass": "SynchroAttExtKey",
+			"friendlyname": "virtualmachinetype_id"
 		},
 		{
 			"attcode": "osfamily_id",
