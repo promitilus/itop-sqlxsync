@@ -265,17 +265,18 @@ abstract class Collector
 	protected function GetVersionFromModuleFile()
 	{
 		$aFiles = glob(APPROOT.'collectors/module.*.php');
-		$sModuleFile = null;
-		$sModuleFile = reset($aFiles);
-		if ($sModuleFile == null)
+		if (!$aFiles)
 		{
 			// No module found, use a default value...
 			$this->sVersion = '1.0.0';
+            Utils::Log(LOG_INFO, "Please create a 'module.*.php' file in 'collectors' folder in order to define the version of collectors");
+			return;
 		}
 		
 		try
 		{
-			$sModuleFileContents = file_get_contents($sModuleFile);
+			$sModuleFile = reset($aFiles);
+            $sModuleFileContents = file_get_contents($sModuleFile);
 			$sModuleFileContents = str_replace(array('<?php', '?>'), '', $sModuleFileContents);
 			$sModuleFileContents = str_replace('SetupWebPage::AddModule(', '$this->InitVersionCallback(', $sModuleFileContents);
 			$bRet = eval($sModuleFileContents);
@@ -310,18 +311,53 @@ abstract class Collector
 			$this->sVersion = "1.0.0";
 		}
 	}
+	
+	/**
+	 * Inspects the definition of the Synchro Data Source to find inconsistencies
+	 * @param mixed[] $aExpectedSourceDefinition
+	 * @throws Exception
+	 * @return void
+	 */
+	protected function CheckDataSourceDefinition($aExpectedSourceDefinition)
+	{
+	    Utils::Log(LOG_DEBUG, "Checking the configuration of the data source '{$aExpectedSourceDefinition['name']}'...");
+	    
+	    // Check that there is at least 1 reconciliation key, if the reconciliation_policy is "use_attributes"
+	    if ($aExpectedSourceDefinition['reconciliation_policy'] == 'use_attributes')
+	    {
+		    $bReconciliationKeyFound = false;
+		    foreach($aExpectedSourceDefinition['attribute_list'] as $aAttributeDef)
+		    {
+		        if ($aAttributeDef['reconcile'] == '1')
+		        {
+		            $bReconciliationKeyFound = true;
+		            break;
+		        }
+		    }
+		    if (!$bReconciliationKeyFound)
+		    {
+		        throw new InvalidConfigException("Collector::CheckDataSourceDefinition: Missing reconciliation key for data source '{$aExpectedSourceDefinition['name']}'. " .
+		           "At least one attribute in 'attribute_list' must have the flag 'reconcile' set to '1'.");
+		    }
+	    }
+	    
+	    // Check the database table name for invalid characters
+	    $sDatabaseTableName = $aExpectedSourceDefinition['database_table_name'];
+	    if (!preg_match(self::TABLENAME_PATTERN, $sDatabaseTableName))
+	    {
+	        throw new InvalidConfigException("Collector::CheckDataSourceDefinition: '{$aExpectedSourceDefinition['name']}' invalid characters in database_table_name, ".
+	            "current value is '$sDatabaseTableName'");
+	    }
+	    
+	    Utils::Log(LOG_DEBUG, "The configuration of the data source '{$aExpectedSourceDefinition['name']}' looks correct.");
+	}
 
 	public function InitSynchroDataSource($aPlaceholders)
 	{
 		$bResult = true;
 		$sJSONSourceDefinition = $this->GetSynchroDataSourceDefinition($aPlaceholders);
 		$aExpectedSourceDefinition = json_decode($sJSONSourceDefinition, true);
-
-		$sDatabaseTableName = $aExpectedSourceDefinition['database_table_name'];
-		if (!preg_match(self::TABLENAME_PATTERN, $sDatabaseTableName)) {
-			throw new InvalidConfigException("\Collector::InitSynchroDataSource : invalid characters in database_table_name, " .
-				"current value is '$sDatabaseTableName'");
-		}
+		$this->CheckDataSourceDefinition($aExpectedSourceDefinition);
 
 		$this->sSourceName = $aExpectedSourceDefinition['name'];
 		try
@@ -642,6 +678,12 @@ abstract class Collector
 				}
 			}
 		}
+		else
+		{
+			Utils::Log(LOG_ERR, "Synchronization of data source '{$this->sSourceName}' failed.");
+			$this->sErrorMessage .= $sResult;
+			$iErrorsCount = 1;
+		}
 		if ($iErrorsCount == 0)
 		{
 			Utils::Log(LOG_INFO, "Synchronization of data source '{$this->sSourceName}' succeeded.");
@@ -759,7 +801,6 @@ abstract class Collector
 						if (preg_match('/Error: No item found with criteria: sync_source_id/', $aResult['message']))
 						{
 							Utils::Log(LOG_ERR, "Failed to update the Synchro Data Source. Inconsistent data model, the attribute '{$aAttr['attcode']}' does not exist in iTop.");
-							Utils::Log(LOG_DEBUG, "Message = {$aResult['message']}.");
 						}
 						else
 						{

@@ -79,7 +79,7 @@ abstract class SQLCollector extends Collector
 			return false;
 		}
 		
-		$bRet = $this->oStatement->execute();
+		$this->oStatement->execute();
 		if ($this->oStatement->errorCode() !== '00000')
 		{
 			$aInfo = $this->oStatement->errorInfo();
@@ -182,7 +182,6 @@ abstract class SQLCollector extends Collector
 	 */
 	public function AttributeIsOptional($sAttCode)
 	{
-		$aCollectorParams = Utils::GetConfigurationValue(get_class($this), array());
 		$aIgnoredAttributes = Utils::GetConfigurationValue(get_class($this)."_ignored_attributes", null);
 		if ($aIgnoredAttributes === null)
 		{

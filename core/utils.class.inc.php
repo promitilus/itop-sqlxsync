@@ -17,6 +17,7 @@
 define('LOG_NONE', -1);
 
 define('CONF_DIR', APPROOT.'conf/');
+require_once(APPROOT.'core/ioexception.class.inc.php');
 
 class Utils
 {
@@ -24,38 +25,40 @@ class Utils
 	static public $iSyslogLogLevel = LOG_NONE;
 	static protected $oConfig = null;
 	static protected $aConfigFiles = array();
-	
+
+	static protected $oMockedLogger;
+
 	static public function ReadParameter($sParamName, $defaultValue)
 	{
 		global $argv;
 		
 		$retValue = $defaultValue;
-		foreach($argv as $iArg => $sArg)
-		{
-			if (preg_match('/^--'.$sParamName.'=(.*)$/', $sArg, $aMatches))
-			{
-				$retValue = $aMatches[1];
-			}
-		}
+        if (is_array($argv))
+        {
+            foreach ($argv as $iArg => $sArg) {
+                if (preg_match('/^--' . $sParamName . '=(.*)$/', $sArg, $aMatches)) {
+                    $retValue = $aMatches[1];
+                }
+            }
+        }
 		return $retValue;
 	}
 	
 	static public function ReadBooleanParameter($sParamName, $defaultValue)
-	{
-		global $argv;
-		
-		$retValue = $defaultValue;
-		foreach($argv as $iArg => $sArg)
-		{
-			if (preg_match('/^--'.$sParamName.'$/', $sArg, $aMatches))
-			{
-				$retValue = true;
-			}
-			else if(preg_match('/^--'.$sParamName.'=(.*)$/', $sArg, $aMatches))
-			{
-				$retValue = ($aMatches[1] != 0);
-			}
-		}
+    {
+        global $argv;
+
+        $retValue = $defaultValue;
+        if (is_array($argv))
+        {
+            foreach ($argv as $iArg => $sArg) {
+                if (preg_match('/^--' . $sParamName . '$/', $sArg, $aMatches)) {
+                    $retValue = true;
+                } else if (preg_match('/^--' . $sParamName . '=(.*)$/', $sArg, $aMatches)) {
+                    $retValue = ($aMatches[1] != 0);
+                }
+            }
+        }
 		return $retValue;
 	}
 	
@@ -64,108 +67,152 @@ class Utils
 		global $argv;
 		
 		$aUnknownParams = array();
-		foreach($argv as $iArg => $sArg)
-		{
-			if ($iArg == 0) continue; // Skip program name
-			if (preg_match('/^--([A-Za-z0-9_]+)$/', $sArg, $aMatches))
-			{
-				// Looks like a boolean parameter
-				if (!array_key_exists($aMatches[1], $aOptionalParams) || ($aOptionalParams[$aMatches[1]] != 'boolean'))
-				{
-					$aUnknownParams[] = $sArg;
-				}
-			}
-			else if(preg_match('/^--([A-Za-z0-9_]+)=(.*)$/', $sArg, $aMatches))
-			{
-				// Looks like a regular parameter
-				if (!array_key_exists($aMatches[1], $aOptionalParams) || ($aOptionalParams[$aMatches[1]] == 'boolean'))
-				{
-					$aUnknownParams[] = $sArg;
-				}
-			}
-			else
-			{
-				$aUnknownParams[] = $sArg;
-			}
-		}		
+        if (is_array($argv))
+        {
+            foreach($argv as $iArg => $sArg)
+            {
+                if ($iArg == 0) continue; // Skip program name
+                if (preg_match('/^--([A-Za-z0-9_]+)$/', $sArg, $aMatches))
+                {
+                    // Looks like a boolean parameter
+                    if (!array_key_exists($aMatches[1], $aOptionalParams) || ($aOptionalParams[$aMatches[1]] != 'boolean'))
+                    {
+                        $aUnknownParams[] = $sArg;
+                    }
+                }
+                else if(preg_match('/^--([A-Za-z0-9_]+)=(.*)$/', $sArg, $aMatches))
+                {
+                    // Looks like a regular parameter
+                    if (!array_key_exists($aMatches[1], $aOptionalParams) || ($aOptionalParams[$aMatches[1]] == 'boolean'))
+                    {
+                        $aUnknownParams[] = $sArg;
+                    }
+                }
+                else
+                {
+                    $aUnknownParams[] = $sArg;
+                }
+            }
+        }
 		return $aUnknownParams;
 	}
+
 	/**
 	 * Logs a message to the centralized log for the application, with the given priority
-	 * 
-	 * @param int $iPriority Use the LOG_* constants for priority e.g. LOG_WARNING, LOG_INFO, LOG_ERR... (see: www.php.net/manual/en/function.syslog.php)
+	 *
+	 * @param int $iPriority Use the LOG_* constants for priority e.g. LOG_WARNING, LOG_INFO, LOG_ERR... (see:
+	 *     www.php.net/manual/en/function.syslog.php)
 	 * @param string $sMessage The message to log
+	 *
 	 * @return void
+	 * @throws \Exception
 	 */
-	static public function Log($iPriority, $sMessage)
-	{
-		switch($iPriority)
-		{
+	static public function Log($iPriority, $sMessage) {
+		//testing only LOG_ERR
+		if (self::$oMockedLogger) {
+			if ($iPriority <= self::$iConsoleLogLevel && $iPriority <= LOG_ERR) {
+				self::$oMockedLogger->Log($iPriority, $sMessage);
+			}
+		}
+
+		switch ($iPriority) {
 			case LOG_EMERG:
-			$sPrio = 'Emergency';
-			break;
+				$sPrio = 'Emergency';
+				break;
 
 			case LOG_ALERT:
-			$sPrio = 'Alert';
-			break;
+				$sPrio = 'Alert';
+				break;
 			case LOG_CRIT:
-			$sPrio = 'Critical Error';
-			break;
+				$sPrio = 'Critical Error';
+				break;
 
 			case LOG_ERR:
-			$sPrio = 'Error';
-			break;
-			
+				$sPrio = 'Error';
+				break;
+
 			case LOG_WARNING:
-			$sPrio = 'Warning';
-			break;
+				$sPrio = 'Warning';
+				break;
 
 			case LOG_NOTICE:
-			$sPrio = 'Notice';
-			break;
-			
+				$sPrio = 'Notice';
+				break;
+
 			case LOG_INFO:
-			$sPrio = 'Info';
-			break;
+				$sPrio = 'Info';
+				break;
 
 			case LOG_DEBUG:
-			$sPrio = 'Debug';
-			break;
+				$sPrio = 'Debug';
+				break;
 		}
-		
-		if ($iPriority <= self::$iConsoleLogLevel)
-		{
-			echo "$sPrio - $sMessage\n";
+
+		if ($iPriority <= self::$iConsoleLogLevel) {
+			$log_date_format = self::GetConfigurationValue("console_log_dateformat", "[Y-m-d H:i:s]");
+			$txt = date($log_date_format)."\t[".$sPrio."]\t".$sMessage."\n";
+			echo $txt;
 		}
-		
-		if ($iPriority <= self::$iSyslogLogLevel)
-		{
-			openlog ( 'iTop Data Collector' , LOG_PID , LOG_USER );
+
+		if ($iPriority <= self::$iSyslogLogLevel) {
+			openlog('iTop Data Collector', LOG_PID, LOG_USER);
 			syslog($iPriority, $sMessage);
 			closelog();
 		}
 	}
 
-	static protected function LoadConfig()
+	static public function MockLog($oMockedLogger) {
+		self::$oMockedLogger = $oMockedLogger;
+	}
+
+    /**
+     * Load the configuration from the various XML condifuration files
+     * @throws Exception
+     * @return Parameters
+     */
+	static public function LoadConfig()
 	{
-		self::$aConfigFiles = array();
+	    $sCustomConfigFile = Utils::ReadParameter('config_file', null);
+
 		self::$aConfigFiles[] = CONF_DIR.'params.distrib.xml';
 		self::$oConfig = new Parameters(CONF_DIR.'params.distrib.xml');
 		if (file_exists(APPROOT.'collectors/params.distrib.xml'))
 		{
-			self::$aConfigFiles[] = APPROOT.'collectors/params.distrib.xml';
-			$oLocalConfig = new Parameters(APPROOT.'collectors/params.distrib.xml');
-			self::$oConfig->Merge($oLocalConfig);
+		    self::MergeConfFile(APPROOT.'collectors/params.distrib.xml');
 		}
-		if (file_exists(CONF_DIR.'params.local.xml'))
+		if ($sCustomConfigFile !== null)
 		{
-			self::$aConfigFiles[] =CONF_DIR.'params.local.xml';
-			$oLocalConfig = new Parameters(CONF_DIR.'params.local.xml');
-			self::$oConfig->Merge($oLocalConfig);
+		    // A custom config file was supplied on the command line
+		    if (file_exists($sCustomConfigFile))
+		    {
+                self::MergeConfFile($sCustomConfigFile);
+		    }
+		    else
+		    {
+		        throw new Exception("The specified configuration file '$sCustomConfigFile' does not exist.");
+		    }
+		}
+		else if (file_exists(CONF_DIR.'params.local.xml'))
+		{
+            self::MergeConfFile(CONF_DIR.'params.local.xml');
 		}
 		return self::$oConfig;
 	}
+
+    static private function MergeConfFile($sFilePath)
+    {
+        self::$aConfigFiles[] = $sFilePath;
+        $oLocalConfig = new Parameters($sFilePath);
+        self::$oConfig->Merge($oLocalConfig);
+    }
 	
+	/**
+	 * Get the value of a configuration parameter
+	 * @param string $sCode
+	 * @param mixed $defaultValue
+	 * @throws Exception
+	 * @return mixed
+	 */
 	static public function GetConfigurationValue($sCode, $defaultValue = '')
 	{
 		if (self::$oConfig == null)
@@ -179,20 +226,30 @@ class Utils
 		return $value;
 	}
 	
+	/**
+	 * Dump information about the configuration (value of the parameters)
+	 * @throws Exception
+	 * @return string
+	 */
 	static public function DumpConfig()
 	{
 		if (self::$oConfig == null)
 		{
-			self::LoadConfig();
+		    self::LoadConfig();
 		}
 		return self::$oConfig->Dump();	
 	}
 	
+	/**
+	 * Get the ordered list of configuration files loaded
+	 * @throws Exception
+	 * @return string
+	 */
 	static public function GetConfigFiles()
 	{
 		if (self::$oConfig == null)
 		{
-			self::LoadConfig();
+		    self::LoadConfig();
 		}
 		return self::$aConfigFiles;	
 	}
@@ -228,9 +285,23 @@ class Utils
 		return $value;		
 	}
 	
+	/**
+	 * Return the (valid) location where to store some temporary data
+	 * Throws an exception if the directory specified in the 'data_path' configuration does not exist and cannot be created
+	 * @param string $sFileName
+	 * @throws Exception
+	 * @return string
+	 */
 	static public  function GetDataFilePath($sFileName)
 	{
-		return APPROOT.'data/'.basename($sFileName);
+	    $sPath = static::GetConfigurationValue('data_path', '%APPROOT%/data/');
+	    $sPath = str_replace('%APPROOT%', APPROOT, $sPath); // substitute the %APPROOT% placeholder with its actual value
+	    $sPath = rtrim($sPath, '/').'/'; // Make that the path ends with exactly one /
+	    if (!file_exists($sPath))
+	    {
+	        if (!mkdir($sPath, 0700, true)) throw new Exception("Failed to create data_path: '$sPath'. Either create the directory yourself or make sure that the script has enough rights to create it.");
+	    }
+	    return $sPath.basename($sFileName);
 	}
 	
 	/**
@@ -283,7 +354,7 @@ class Utils
 				CURLOPT_SSL_VERIFYPEER	=> 0,   	 // Disabled SSL Cert checks
 				// SSLV3 (CURL_SSLVERSION_SSLv3 = 3) is now considered as obsolete/dangerous: http://disablessl3.com/#why
 				// but it used to be a MUST to prevent a strange SSL error: http://stackoverflow.com/questions/18191672/php-curl-ssl-routinesssl23-get-server-helloreason1112
-				//CURLOPT_SSLVERSION		=> 3,
+				// CURLOPT_SSLVERSION		=> 3,
 				CURLOPT_POST			=> count($aData),
 				CURLOPT_POSTFIELDS		=> http_build_query($aData),
 				CURLOPT_HTTPHEADER		=> $aHTTPHeaders,
@@ -293,11 +364,13 @@ class Utils
 			curl_setopt_array($ch, $aAllOptions);
 			$response = curl_exec($ch);
 			$iErr = curl_errno($ch);
-			$sErrMsg =	 curl_error( $ch );
+			$sErrMsg = curl_error( $ch );
 			$aHeaders = curl_getinfo( $ch );
 			if ($iErr !== 0)
 			{
-				throw new Exception("Problem opening URL: $sUrl, $sErrMsg");
+				throw new IOException("Problem opening URL: $sUrl"
+                    .PHP_EOL."    error msg: $sErrMsg"
+                    .PHP_EOL."    curl_init error code: $iErr (cf https://www.php.net/manual/en/function.curl-errno.php)");
 			}
 			if (is_array($aResponseHeaders))
 			{
@@ -329,24 +402,24 @@ class Utils
 			$fp = @fopen($sUrl, 'rb', false, $ctx);
 			if (!$fp)
 			{
-				global $php_errormsg;
-				if (isset($php_errormsg))
+				$error_arr = error_get_last();
+				if (is_array($error_arr))
 				{
-					throw new Exception("Wrong URL: $sUrl, $php_errormsg");
+					throw new IOException("Wrong URL: $sUrl, Error: ". json_encode($error_arr));
 				}
 				elseif ((strtolower(substr($sUrl, 0, 5)) == 'https') && !extension_loaded('openssl'))
 				{
-					throw new Exception("Cannot connect to $sUrl: missing module 'openssl'");
+					throw new IOException("Cannot connect to $sUrl: missing module 'openssl'");
 				}
 				else
 				{
-					throw new Exception("Wrong URL: $sUrl");
+					throw new IOException("Wrong URL: $sUrl");
 				}
 			}
 			$response = @stream_get_contents($fp);
 			if ($response === false)
 			{
-				throw new Exception("Problem reading data from $sUrl, $php_errormsg");
+				throw new IOException("Problem reading data from $sUrl, $php_errormsg");
 			}
 			if (is_array($aResponseHeaders))
 			{
@@ -425,4 +498,54 @@ class Utils
 	
 	    return $result;
 	}
+
+    /**
+     * Executes a command and returns an array with exit code, stdout and stderr content
+     *
+     * @param string $cmd - Command to execute
+     *
+     * @return false|string
+     * @throws \Exception
+     */
+    function Exec($sCmd) {
+        $iBeginTime = time();
+        $sWorkDir = APPROOT;
+        $aDescriptorSpec = array(
+            0 => array("pipe", "r"),  // stdin
+            1 => array("pipe", "w"),  // stdout
+            2 => array("pipe", "w"),  // stderr
+        );
+	    Utils::Log(LOG_INFO, "Command: $sCmd. Workdir: $sWorkDir");
+        $rProcess = proc_open($sCmd, $aDescriptorSpec, $aPipes, $sWorkDir, null);
+
+        $sStdOut = stream_get_contents($aPipes[1]);
+        fclose($aPipes[1]);
+
+        $sStdErr = stream_get_contents($aPipes[2]);
+        fclose($aPipes[2]);
+
+        $iCode = proc_close($rProcess);
+
+        $iElapsed = time() - $iBeginTime;
+        if (0 === $iCode) {
+            Utils::Log(LOG_INFO, "elapsed:${iElapsed}s output: $sStdOut");
+            return $sStdOut;
+        } else {
+            throw new Exception("Command failed : $sCmd \n\t\t=== with status:$iCode \n\t\t=== stderr:$sStdErr \n\t\t=== stdout: $sStdOut");
+        }
+    }
+}
+
+class UtilsLogger
+{
+    /**
+     * UtilsLogger constructor.
+     */
+    public function __construct()
+    {
+    }
+
+    public function Log($iPriority, $sMessage)
+    {
+    }
 }

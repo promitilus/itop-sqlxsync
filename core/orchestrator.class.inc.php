@@ -199,14 +199,25 @@ class Orchestrator
 			}
 			else
 			{
-				Utils::Log(LOG_ERR, "Unable to find user with login = '$sSynchroUser'. No user will be defined.");
+			    if (array_key_exists('message', $aRes))
+                {
+                    Utils::Log(LOG_ERR, "Unable to use synchro user with login = '$sSynchroUser'. " . $aRes['message']);
+                }
+			    else
+                {
+                    Utils::Log(LOG_ERR, "Unable to use synchro user with login = '$sSynchroUser'. No user is defined.");
+                }
 			}
 		}
 		$aOtherPlaceholders = Utils::GetConfigurationValue('json_placeholders', array());
-		foreach($aOtherPlaceholders as $sKey => $sValue)
-		{
-			$aPlaceholders['$'.$sKey.'$'] = $sValue;
-		}
+
+        if (is_array($aOtherPlaceholders))
+        {
+		    foreach($aOtherPlaceholders as $sKey => $sValue)
+            {
+                $aPlaceholders['$'.$sKey.'$'] = $sValue;
+            }
+        }
 
 		/** @var \Collector $oCollector */
 		foreach($aCollectors as $oCollector)
