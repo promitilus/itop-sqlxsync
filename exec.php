@@ -20,6 +20,7 @@
 define('APPROOT', dirname(__FILE__).'/');
 
 require_once(APPROOT.'core/parameters.class.inc.php');
+require_once(APPROOT.'core/ioexception.class.inc.php');
 require_once(APPROOT.'core/utils.class.inc.php');
 require_once(APPROOT.'core/restclient.class.inc.php');
 require_once(APPROOT.'core/lookuptable.class.inc.php');
@@ -27,13 +28,29 @@ require_once(APPROOT.'core/mappingtable.class.inc.php');
 require_once(APPROOT.'core/collector.class.inc.php');
 require_once(APPROOT.'core/orchestrator.class.inc.php');
 require_once(APPROOT.'core/sqlcollector.class.inc.php'); // Depends on Orchestrator for settings a minimum version for PHP because of the use of PDO
+require_once(APPROOT.'core/csvcollector.class.inc.php');
+require_once(APPROOT.'core/jsoncollector.class.inc.php');
 
-$aOptionalParams = array('configure_only' => 'boolean', 'collect_only' => 'boolean', 'synchro_only' => 'boolean', 'dump_config_only' => 'boolean', 'console_log_level' => 'integer', 'max_chunk_size' => 'integer');
+$aOptionalParams = array(
+    'configure_only' => 'boolean',
+    'collect_only' => 'boolean',
+    'synchro_only' => 'boolean',
+    'dump_config_only' => 'boolean',
+    'console_log_level' => 'integer',
+    'max_chunk_size' => 'integer',
+    'help' => 'boolean',
+    'config_file' => 'string'
+);
+$bHelp = (Utils::ReadBooleanParameter('help', false) == true);
 $aUnknownParameters = Utils::CheckParameters($aOptionalParams);
-if (count($aUnknownParameters) > 0)
+if ($bHelp || count($aUnknownParameters) > 0)
 {
-	Utils::Log(LOG_ERR, "Unknown parameter(s): ".implode(' ', $aUnknownParameters));
-	echo "Usage:\n";
+	if (!$bHelp)
+    {
+        Utils::Log(LOG_ERR, "Unknown parameter(s): ".implode(' ', $aUnknownParameters));
+    }
+
+    echo "Usage:\n";
 	echo 'php '.basename($argv[0]);
 	foreach($aOptionalParams as $sParam => $sType)
 	{
@@ -48,21 +65,23 @@ if (count($aUnknownParameters) > 0)
 			break;
 		}
 	}
+	echo "\n";
 	exit(1);
 }
 	
 $bResult = true;
+// Note: The parameter 'config_file' is read directly by Utils::LoadConfig()
 $bConfigureOnly = (Utils::ReadBooleanParameter('configure_only', false) == true);
 $bCollectOnly = (Utils::ReadBooleanParameter('collect_only', false) == true);
 $bSynchroOnly = (Utils::ReadBooleanParameter('synchro_only', false) == true);
 $bDumpConfigOnly = (Utils::ReadBooleanParameter('dump_config_only', false) == true);
 
-Utils::$iConsoleLogLevel = Utils::ReadParameter('console_log_level', Utils::GetConfigurationValue('console_log_level', LOG_INFO));
-$iMaxChunkSize = Utils::ReadParameter('max_chunk_size', Utils::GetConfigurationValue('max_chunk_size', 1000));
-
 try
 {
-	if (file_exists(APPROOT.'collectors/main.php'))
+    Utils::$iConsoleLogLevel = Utils::ReadParameter('console_log_level', Utils::GetConfigurationValue('console_log_level', LOG_WARNING));//On windows LOG_NOTICE=LOG_INFO=LOG_DEBUG=6
+    $iMaxChunkSize = Utils::ReadParameter('max_chunk_size', Utils::GetConfigurationValue('max_chunk_size', 1000));
+    
+    if (file_exists(APPROOT.'collectors/main.php'))
 	{
 		require_once(APPROOT.'collectors/main.php');
 	}
@@ -96,8 +115,8 @@ try
 	else
 	{
 		Utils::Log(LOG_DEBUG, $sConfigDebug);
-	}	
-	
+	}
+
 	$oOrchestrator = new Orchestrator();
 	$aCollectors = $oOrchestrator->ListCollectors();
 	Utils::Log(LOG_DEBUG, "Registered collectors:");
@@ -123,6 +142,7 @@ try
 }
 catch(Exception $e)
 {
+    $bResult = false;
 	Utils::Log(LOG_ERR, "Exception: ".$e->getMessage());
 }
 
