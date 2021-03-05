@@ -8,6 +8,7 @@ require_once(APPROOT.'collectors/SQLXDeviceCollector.class.inc.php');
 require_once(APPROOT.'collectors/SQLXFarmCollector.class.inc.php');
 require_once(APPROOT.'collectors/SQLXHypervisorCollector.class.inc.php');
 require_once(APPROOT.'collectors/SQLXInterfaceCollector.class.inc.php');
+require_once(APPROOT.'collectors/SQLXIPUsageCollector.class.inc.php');
 require_once(APPROOT.'collectors/SQLXIPv4AddressCollector.class.inc.php');
 require_once(APPROOT.'collectors/SQLXlnkIPInterfaceToIPAddressCollector.class.inc.php');
 require_once(APPROOT.'collectors/SQLXLogicalInterfaceCollector.class.inc.php');
