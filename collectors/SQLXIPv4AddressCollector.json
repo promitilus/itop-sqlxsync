@@ -163,10 +163,10 @@
 		},
 		{
 			"attcode": "usage_id",
-			"update": "0",
+			"update": "1",
 			"reconcile": "0",
-			"update_policy": "master_unlocked",
-			"reconciliation_attcode": "",
+			"update_policy": "write_if_empty",
+			"reconciliation_attcode": "name",
 			"finalclass": "SynchroAttExtKey",
 			"friendlyname": "usage_id"
 		}
