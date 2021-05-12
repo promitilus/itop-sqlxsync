@@ -1,5 +1,5 @@
 {
-	"name": "$prefix$:Device",
+	"name": "$prefix$:NetworkDevice",
 	"description": "SQLX Data Collector (v. $version$): Network Devices",
 	"status": "$synchro_status$",
 	"user_id": "$synchro_user$",
@@ -13,7 +13,7 @@
 	"action_on_one": "update",
 	"action_on_multiple": "error",
 	"delete_policy": "update",
-	"delete_policy_update": "status:obsolete;",
+	"delete_policy_update": "status:obsolete;ram:0",
 	"delete_policy_retention": "1728000",
 	"attribute_list": [
 		{
@@ -123,13 +123,31 @@
 			"friendlyname": "end_of_warranty"
 		},
 		{
-			"attcode": "iosversion_id",
+			"attcode": "osfamily_id",
 			"update": "1",
 			"reconcile": "0",
 			"update_policy": "master_locked",
-			"reconciliation_attcode": "",
+			"reconciliation_attcode": "name",
 			"finalclass": "SynchroAttExtKey",
-			"friendlyname": "iosversion_id"
+			"friendlyname": "osfamily_id"
+		},
+		{
+			"attcode": "oslicence_id",
+			"update": "1",
+			"reconcile": "0",
+			"update_policy": "master_locked",
+			"reconciliation_attcode": "name",
+			"finalclass": "SynchroAttExtKey",
+			"friendlyname": "oslicence_id"
+		},
+		{
+			"attcode": "osversion_id",
+			"update": "1",
+			"reconcile": "0",
+			"update_policy": "master_locked",
+			"reconciliation_attcode": "name",
+			"finalclass": "SynchroAttExtKey",
+			"friendlyname": "osversion_id"
 		},
 		{
 			"attcode": "location_id",

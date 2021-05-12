@@ -4,7 +4,8 @@ require_once(APPROOT.'collectors/SQLXCollector.class.inc.php');
 
 require_once(APPROOT.'collectors/SQLXBrandCollector.class.inc.php');
 require_once(APPROOT.'collectors/SQLXCollector.class.inc.php');
-require_once(APPROOT.'collectors/SQLXDeviceCollector.class.inc.php');
+require_once(APPROOT.'collectors/SQLXNetworkDeviceCollector.class.inc.php');
+require_once(APPROOT.'collectors/SQLXNetworkDeviceTypeCollector.class.inc.php');
 require_once(APPROOT.'collectors/SQLXFarmCollector.class.inc.php');
 require_once(APPROOT.'collectors/SQLXHypervisorCollector.class.inc.php');
 require_once(APPROOT.'collectors/SQLXInterfaceCollector.class.inc.php');
