@@ -181,7 +181,7 @@
 			"update": "1",
 			"reconcile": "0",
 			"update_policy": "master_unlocked",
-			"reconciliation_attcode": "",
+			"reconciliation_attcode": "USKC",
 			"finalclass": "SynchroAttExtKey",
 			"friendlyname": "model_id"
 		},
