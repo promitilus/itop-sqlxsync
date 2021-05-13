@@ -38,7 +38,7 @@
 		},
 		{
 			"attcode": "asset_number",
-			"update": "0",
+			"update": "1",
 			"reconcile": "0",
 			"update_policy": "master_locked",
 			"finalclass": "SynchroAttribute",
@@ -63,7 +63,7 @@
 		},
 		{
 			"attcode": "connectablecis_list",
-			"update": "0",
+			"update": "1",
 			"reconcile": "0",
 			"update_policy": "master_locked",
 			"row_separator": "|",
@@ -151,7 +151,7 @@
 		},
 		{
 			"attcode": "location_id",
-			"update": "0",
+			"update": "1",
 			"reconcile": "0",
 			"update_policy": "write_if_empty",
 			"reconciliation_attcode": "name",
@@ -276,7 +276,7 @@
 		},
 		{
 			"attcode": "ram",
-			"update": "0",
+			"update": "1",
 			"reconcile": "0",
 			"update_policy": "master_locked",
 			"finalclass": "SynchroAttribute",
@@ -284,7 +284,7 @@
 		},
 		{
 			"attcode": "serialnumber",
-			"update": "0",
+			"update": "1",
 			"reconcile": "0",
 			"update_policy": "master_locked",
 			"finalclass": "SynchroAttribute",
@@ -309,6 +309,22 @@
 			"attribute_qualifier": "'",
 			"finalclass": "SynchroAttLinkSet",
 			"friendlyname": "tickets_list"
+		},
+		{
+			"attcode": "monitoring_auto",
+			"update": "0",
+			"reconcile": "0",
+			"update_policy": "master_unlocked",
+			"finalclass": "SynchroAttribute",
+			"friendlyname": "monitoring_auto"
+		},
+		{
+			"attcode": "monitoringip_id",
+			"update": "0",
+			"reconcile": "0",
+			"update_policy": "master_unlocked",
+			"finalclass": "SynchroAttribute",
+			"friendlyname": "monitoringip_id"
 		}
 	],
 	"user_delete_policy": "administrators",

@@ -18,7 +18,7 @@
 	"attribute_list": [
 		{
 			"attcode": "comment",
-			"update": "0",
+			"update": "1",
 			"reconcile": "0",
 			"update_policy": "master_unlocked",
 			"finalclass": "SynchroAttribute",
@@ -54,7 +54,7 @@
 		},
 		{
 			"attcode": "speed",
-			"update": "0",
+			"update": "1",
 			"reconcile": "0",
 			"update_policy": "master_locked",
 			"finalclass": "SynchroAttribute",
