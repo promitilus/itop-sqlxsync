@@ -370,6 +370,14 @@
 			"friendlyname": "monitoring_auto"
 		},
 		{
+			"attcode": "monitoring_status",
+			"update": "0",
+			"reconcile": "0",
+			"update_policy": "master_unlocked",
+			"finalclass": "SynchroAttribute",
+			"friendlyname": "monitoring_status"
+		},
+		{
 			"attcode": "monitoringip_id",
 			"update": "0",
 			"reconcile": "0",
