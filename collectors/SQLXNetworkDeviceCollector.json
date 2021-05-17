@@ -48,7 +48,7 @@
 			"attcode": "brand_id",
 			"update": "1",
 			"reconcile": "0",
-			"update_policy": "master_unlocked",
+			"update_policy": "master_locked",
 			"reconciliation_attcode": "friendlyname",
 			"finalclass": "SynchroAttExtKey",
 			"friendlyname": "brand_id"
@@ -180,7 +180,7 @@
 			"attcode": "model_id",
 			"update": "1",
 			"reconcile": "0",
-			"update_policy": "master_unlocked",
+			"update_policy": "master_locked",
 			"reconciliation_attcode": "USKC",
 			"finalclass": "SynchroAttExtKey",
 			"friendlyname": "model_id"
