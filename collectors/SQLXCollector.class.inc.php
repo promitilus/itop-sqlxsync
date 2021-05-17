@@ -52,9 +52,9 @@ class SQLXCollectorConfig extends Utils {
 	}
 
 	public static function getPlaceholders() {
-		if (!isset(static::$config['placeholders']))
-			return array();
-		return static::$config['placeholders'];
+		if (isset(static::$config['placeholders']))
+			static::$config['placeholders'];
+		return array();
 	}
 
 	public static function getCollectors() {
@@ -94,7 +94,7 @@ class SQLXCollectorConfig extends Utils {
 	public function configureCore() {
 		// override toolkit core params
 		$config = static::getConfig();
-		$globalPlaceholder = static::getPlaceholders();
+		$globalPlaceholders = static::getPlaceholders();
 
 		if (isset($config['placeholders'])) {
 			$placeholders = Utils::$oConfig->Get('json_placeholders', array());
