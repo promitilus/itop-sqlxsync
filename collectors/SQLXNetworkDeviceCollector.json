@@ -294,7 +294,7 @@
 			"attcode": "status",
 			"update": "1",
 			"reconcile": "0",
-			"update_policy": "master_locked",
+			"update_policy": "master_unlocked",
 			"finalclass": "SynchroAttribute",
 			"friendlyname": "status"
 		},
