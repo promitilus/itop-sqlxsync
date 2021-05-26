@@ -41,6 +41,7 @@ do
 		# PRIVATE
 		"---PROCESS" )
 			arg_process="$2";
+			shift; shift;
 			break;
 			;;
 		-*)
@@ -62,6 +63,7 @@ function exec_sync() {
 # SYNCHRONISATION SUBPROCESS (expected to be protected by flock)
 if [ -n "$arg_process" ];
 then
+env | grep ARG
 	if [ "$ARG_SYNCHRO" != "1" ];
 	then
 		mkdir -p "$DATA_DIR";
@@ -75,7 +77,7 @@ then
 			exit 1;
 		fi;
 	fi;
-	SQL_COLLECTOR_SOURCE="$arg_process" exec_sync "${ARGS[@]}";
+	SQL_COLLECTOR_SOURCE="$arg_process" exec_sync "$@";
 	exit $?;
 fi;
 
@@ -121,5 +123,5 @@ do
 	export ARG_SYNCHRO="$arg_synchro";
 	export ARG_COLLECT="$arg_collect";
 
-	flock -w "$arg_lock_wait" "$LOCK_FILE" $0 ---PROCESS "$src";
+	flock -w "$arg_lock_wait" "$LOCK_FILE" $0 ---PROCESS "$src" "${ARGS[@]}";
 done;
