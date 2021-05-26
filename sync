@@ -8,13 +8,18 @@ arg_all=0;
 arg_collect=0;
 arg_synchro=0;
 arg_sources=();
+arg_process='';
+arg_lock_wait=1800;
 for arg in "$@";
 do
 	case "$arg" in
-		"-l" | "--list")	arg_list=1
+		"-l" | "--list")
+			arg_list=1;
+			shift;
 			;;
 		"-a" | "--all")
-			arg_all=1
+			arg_all=1;
+			shift;
 			;;
 		"-h")
 			echo "usage: $BN [ --l | --all ]" >&2;
@@ -23,9 +28,20 @@ do
 			;;
 		"-c" | "--collect" )
 			arg_collect=1;
+			shift;
 			;;
 		"-s" | "--sync" | "--synchro" )
 			arg_synchro=1;
+			shift;
+			;;
+		--wait=* )
+			arg_lock_wait="${arg#--wait=}";
+			shift;
+			;;
+		# PRIVATE
+		"---PROCESS" )
+			arg_process="$2";
+			break;
 			;;
 		-*)
 			echo "ERROR: unknown argument '$arg'" >&2;
@@ -37,12 +53,34 @@ do
 	esac;
 done;
 
+set -u;
+
 function exec_sync() {
 	php "$DN/exec.php" "$@";
 }
 
-set -u;
+# SYNCHRONISATION SUBPROCESS (expected to be protected by flock)
+if [ -n "$arg_process" ];
+then
+	if [ "$ARG_SYNCHRO" != "1" ];
+	then
+		mkdir -p "$DATA_DIR";
+		rm -f $SOURCE_FILE $DATA_DIR/*.txt $DATA_DIR/*;
+		echo "$arg_process" >$SOURCE_FILE;
+	else
+		read data_src < $SOURCE_FILE;
+		if [ "$data_src" != "$arg_process" ];
+		then
+			echo "$BN: collected data source ($data_src) does not match synchro source ($arg_process) !" >&2;
+			exit 1;
+		fi;
+	fi;
+	SQL_COLLECTOR_SOURCE="$arg_process" exec_sync "${ARGS[@]}";
+	exit $?;
+fi;
 
+##########
+### MAIN
 ARGS=();
 if [ "$arg_list" = "1" ];
 then
@@ -75,20 +113,13 @@ then
 fi;
 
 # process
+export DATA_DIR="$DN/data";
+export LOCK_FILE="$DATA_DIR/.lock";
+export SOURCE_FILE="$DATA_DIR/.source";
 for src in "${arg_sources[@]}";
 do
-	if [ "$arg_synchro" != "1" ];
-	then
-		mkdir -p "$DN/data";
-		rm -f $DN/data/.source $DN/data/*.txt $DN/data/*;
-		echo "$src" >$DN/data/.source;
-	else
-		read data_src < $DN/data/.source;
-		if [ "$data_src" != "$src" ];
-		then
-			echo "$BN: collected data source ($data_src) does not match synchro source ($src) !" >&2;
-			exit 1;
-		fi;
-	fi;
-	SQL_COLLECTOR_SOURCE="$src" exec_sync "${ARGS[@]}";
+	export ARG_SYNCHRO="$arg_synchro";
+	export ARG_COLLECT="$arg_collect";
+
+	flock -w "$arg_lock_wait" "$LOCK_FILE" $0 ---PROCESS "$src";
 done;
