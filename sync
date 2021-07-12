@@ -63,7 +63,6 @@ function exec_sync() {
 # SYNCHRONISATION SUBPROCESS (expected to be protected by flock)
 if [ -n "$arg_process" ];
 then
-env | grep ARG
 	if [ "$ARG_SYNCHRO" != "1" ];
 	then
 		mkdir -p "$DATA_DIR";

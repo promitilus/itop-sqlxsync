@@ -57,10 +57,22 @@ class SQLXCollectorConfig extends Utils {
 		return array();
 	}
 
+        public static function getQueries($name) {
+		if (!isset(static::$config['queries'][$name]))
+			throw new Exception("Collector queries with '$name' doesn't exists.");
+		return static::$config['queries'][$name];
+        }
+
 	public static function getCollectors() {
 		$name = static::getName();
 		$config = static::getConfig();
 
+		// use queries by name
+		if (is_string($config['queries'])) {
+			$config['queries'] = static::getQueries($config['queries']);
+		}
+
+		// verify collectors usage
 		$collectors = array();
 		foreach ($config['queries'] as &$query) {
 			foreach ($query['collectors'] as $collector) {
