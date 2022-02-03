@@ -37,6 +37,7 @@ $aOptionalParams = array(
     'synchro_only' => 'boolean',
     'dump_config_only' => 'boolean',
     'console_log_level' => 'integer',
+    'eventissue_log_level' => 'integer',
     'max_chunk_size' => 'integer',
     'help' => 'boolean',
     'config_file' => 'string'
@@ -79,6 +80,7 @@ $bDumpConfigOnly = (Utils::ReadBooleanParameter('dump_config_only', false) == tr
 try
 {
     Utils::$iConsoleLogLevel = Utils::ReadParameter('console_log_level', Utils::GetConfigurationValue('console_log_level', LOG_WARNING));//On windows LOG_NOTICE=LOG_INFO=LOG_DEBUG=6
+    Utils::$iEventIssueLogLevel = Utils::ReadParameter('eventissue_log_level', Utils::GetConfigurationValue('eventissue_log_level', LOG_NONE));//On windows LOG_NOTICE=LOG_INFO=LOG_DEBUG=6
     $iMaxChunkSize = Utils::ReadParameter('max_chunk_size', Utils::GetConfigurationValue('max_chunk_size', 1000));
     
     if (file_exists(APPROOT.'collectors/main.php'))

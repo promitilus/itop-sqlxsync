@@ -62,14 +62,6 @@
 			"friendlyname": "name"
 		},
 		{
-			"attcode": "speed",
-			"update": "1",
-			"reconcile": "0",
-			"update_policy": "master_locked",
-			"finalclass": "SynchroAttribute",
-			"friendlyname": "speed"
-		},
-		{
 			"attcode": "vlans_list",
 			"update": "0",
 			"reconcile": "0",

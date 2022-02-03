@@ -29,6 +29,7 @@ Orchestrator::AddRequirement('5.6.0'); // Minimum PHP version
  * - <path> to configuring the path in the json file to take to find the data
  * by example aa/bb for {"aa":{"bb":{mydata},"cc":"xxx"}
  *      "*" will replace any tag aa/ * /bb  for {"aa":{cc":{"bb":{mydata1}},"dd":{"bb":{mydata2}}}
+ *
  */
 
 abstract class JsonCollector extends Collector
@@ -41,6 +42,7 @@ abstract class JsonCollector extends Collector
     protected $aFieldsKey;
     protected $sJsonCliCommand;
     protected $iIdx;
+    protected $aSynchroFieldsToDefaultValues = array();
 
     /**
      * Initalization
@@ -114,6 +116,15 @@ abstract class JsonCollector extends Collector
             Utils::Log(LOG_ERR, "[" . get_class($this) . "] no json URL or path configured! Cannot collect data. Please configure it as '<jsonurl>' or '<jsonfile>' in the configuration file.");
             return false;
         }
+        if (array_key_exists('defaults', $aParamsSourceJson)) {
+            if ($aParamsSourceJson['defaults'] !== '') {
+                $this->aSynchroFieldsToDefaultValues = $aParamsSourceJson['defaults'];
+                if (!is_array($this->aSynchroFieldsToDefaultValues)) {
+                    Utils::Log(LOG_ERR,"[".get_class($this)."] defaults section configuration is not correct. please see documentation.");
+                    return false;
+                }
+            }
+        }
 
         if (isset($aParamsSourceJson["path"]))
         {
@@ -157,16 +168,15 @@ abstract class JsonCollector extends Collector
             $aCurlOptions[CURLOPT_CONNECTTIMEOUT] = $iSynchroTimeout;
             $aCurlOptions[CURLOPT_TIMEOUT] = $iSynchroTimeout;
 
-            //logs
-            Utils::Log(LOG_INFO, 'synchro url: ' . $this->sURL);
-            Utils::Log(LOG_DEBUG, 'synchro aDataGet: ' . json_encode($aDataGet));
+              //logs
+            Utils::Log(LOG_DEBUG, 'Source aDataGet: ' . json_encode($aDataGet));
             $this->sFileJson = Utils::DoPostRequest($this->sURL, $aDataGet, null, $aResponseHeaders, $aCurlOptions);
-            Utils::Log(LOG_DEBUG, 'synchro sFileJson: ' . $this->sFileJson);
-        }
-        else
-        {
+            Utils::Log(LOG_DEBUG, 'Source sFileJson: ' . $this->sFileJson);
+            Utils::Log(LOG_INFO, 'Synchro URL (target): ' . Utils::GetConfigurationValue('itop_url', array()));
+        } else {
             $this->sFileJson = file_get_contents($this->sFilePath);
-            Utils::Log(LOG_DEBUG, 'synchro sFileJson: ' . $this->sFileJson);
+            Utils::Log(LOG_DEBUG, 'Source sFileJson: ' . $this->sFileJson);
+            Utils::Log(LOG_INFO, 'Synchro  URL (target): ' . Utils::GetConfigurationValue('itop_url', array()));
         }
         
         //verify the file
@@ -294,7 +304,15 @@ abstract class JsonCollector extends Collector
                 }
                 if ($bFind) {
                     Utils::Log(LOG_DEBUG, "aDataToSynchronize[$key]: " . json_encode($aValue));
-                    $aDataToSynchronize[$key] = $aValue;
+                    if (empty ($aValue) && array_key_exists($key, $this->aSynchroFieldsToDefaultValues)){
+                        $aDataToSynchronize[$key] =  $this->aSynchroFieldsToDefaultValues[$key];
+                    } else {
+                        $aDataToSynchronize[$key] = $aValue;
+                    }
+                } else {
+                     if (array_key_exists($key, $this->aSynchroFieldsToDefaultValues)) {
+                        $aDataToSynchronize[$key] =  $this->aSynchroFieldsToDefaultValues[$key];
+                    }
                 }
             }
             Utils::Log(LOG_DEBUG, '$aDataToSynchronize: ' . json_encode($aDataToSynchronize));

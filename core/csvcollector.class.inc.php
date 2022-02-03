@@ -15,8 +15,6 @@
 //   You should have received a copy of the GNU Affero General Public License
 //   along with this application. If not, see <http://www.gnu.org/licenses/>
 
-Orchestrator::AddRequirement('5.6.0'); // Minimum PHP version to get PDO support
-
 /**
  * Base class for creating collectors which retrieve their data via a CSV files
  *
@@ -166,13 +164,13 @@ abstract class CSVCollector extends Collector {
 			try{
 				$hHandle = fopen($sCsvFilePath, "r");
 			}catch(Exception $e) {
-				Utils::Log(LOG_ERROR, "[".get_class($this)."] Cannot open CSV file $sCsvFilePath");
+				Utils::Log(LOG_ERR, "[".get_class($this)."] Cannot open CSV file $sCsvFilePath");
 				return false;
 			}
 		}
 
 		if (!$hHandle) {
-			Utils::Log(LOG_ERROR, "[".get_class($this)."] Cannot use CSV file handle for $sCsvFilePath");
+			Utils::Log(LOG_ERR, "[".get_class($this)."] Cannot use CSV file handle for $sCsvFilePath");
 			return false;
 		}
 
@@ -242,8 +240,11 @@ abstract class CSVCollector extends Collector {
 			$sSynchroColumn = $this->aSynchroColumns[$i];
 			$i++;
 			if (array_key_exists($sSynchroColumn, $this->aSynchroFieldsToDefaultValues)) {
-				//replacing by default value
-				$aData[$sSynchroColumn] = $this->aSynchroFieldsToDefaultValues[$sSynchroColumn];
+				if (empty($sVal)) {
+				    $aData[$sSynchroColumn] = $this->aSynchroFieldsToDefaultValues[$sSynchroColumn];
+				}	else {
+                    $aData[$sSynchroColumn] = $sVal;
+                }
 			}
 			else {
 				if (!in_array($sSynchroColumn, $this->aIgnoredSynchroFields)) {

@@ -153,7 +153,8 @@ abstract class SQLXCollector extends Collector
 			$config['db']['dsn'] = $config['dsn'];
 
 		// connect
-		Utils::Log(LOG_INFO, sprintf("Connecting to %s.", $config['db']['dsn']));
+		$dsn_masked = preg_replace('/;password=[^;]+/', '', $config['db']['dsn']);
+		Utils::Log(LOG_INFO, sprintf("Connecting to %s.", $dsn_masked));
 		$dbh = new PDO($config['db']['dsn'],
 				$config['db']['user'] ?? NULL, $config['db']['password'] ?? NULL,
 				array(
