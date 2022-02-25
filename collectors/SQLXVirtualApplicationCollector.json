@@ -11,7 +11,7 @@
 	"reconciliation_policy": "use_attributes",
 	"action_on_zero": "create",
 	"action_on_one": "update",
-	"action_on_multiple": "error",
+	"action_on_multiple": "take_first",
 	"delete_policy": "update",
 	"delete_policy_update": "status:inactive",
 	"delete_policy_retention": "1728000",
