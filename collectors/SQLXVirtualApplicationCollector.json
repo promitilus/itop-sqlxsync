@@ -17,17 +17,9 @@
 	"delete_policy_retention": "1728000",
 	"attribute_list": [
 		{
-			"attcode": "USKC",
-			"update": "1",
-			"reconcile": "1",
-			"update_policy": "master_locked",
-			"finalclass": "SynchroAttribute",
-			"friendlyname": "USKC"
-		},
-		{
 			"attcode": "name",
 			"update": "1",
-			"reconcile": "0",
+			"reconcile": "1",
 			"update_policy": "master_locked",
 			"finalclass": "SynchroAttribute",
 			"friendlyname": "name"
