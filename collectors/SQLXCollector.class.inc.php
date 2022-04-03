@@ -191,8 +191,14 @@ abstract class SQLXCollector extends Collector
 		}
 		$data = $res->fetchAll(PDO::FETCH_ASSOC);
 
-		// TODO: sort here, by primary_key and then sort keys by ksort()
-		array_multisort(array_column($data, 'primary_key'), SORT_ASC, $data);
+		// count non-empty values
+		array_walk($data, function(&$item) {
+			$item['__values'] = count(array_filter(array_values($item), function ($v) { return empty($v) ? NULL : $v; }));
+		});
+
+		// sort by key, and count of values
+		array_multisort(array_column($data, 'primary_key'), SORT_ASC,
+			array_column($data, '__values'), SORT_DESC, $data);
 		SQLXCollectorConfig::setCollectorCache($this->name, $data);
 		return $data;
 	}
@@ -223,6 +229,9 @@ abstract class SQLXCollector extends Collector
 			$res1 = array();
 			$res2 = array();
 			foreach ($row as $k => $v) {
+				if (strpos($k, '__') === 0)
+					continue;
+
 				if (!preg_match('/^(\w+):(\w+)$/', $k, $matches)) {
 					$res1[$k] = $v;
 					continue;
@@ -274,7 +283,7 @@ abstract class SQLXCollector extends Collector
 	}
 
 	public function AttributeIsOptional($sAttCode) {
-		if (strpos($sAttCode, 'monitoring_') == 0)
+		if (preg_match('/monitoring(ip)?_/', $sAttCode))
 			return true;
 		return parent::AttributeIsOptional($sAttCode);
 	}
