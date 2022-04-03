@@ -1,4 +1,4 @@
-FROM php:7.3-cli
+FROM php:7.4-cli
 
 ADD https://raw.githubusercontent.com/mlocati/docker-php-extension-installer/master/install-php-extensions /usr/local/bin/
 

@@ -274,7 +274,7 @@ abstract class SQLXCollector extends Collector
 	}
 
 	public function AttributeIsOptional($sAttCode) {
-		if (str_starts_with($sAttCode, 'monitoring_'))
+		if (strpos($sAttCode, 'monitoring_') == 0)
 			return true;
 		return parent::AttributeIsOptional($sAttCode);
 	}
