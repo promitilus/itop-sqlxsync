@@ -114,8 +114,7 @@
 			"update": "1",
 			"reconcile": "0",
 			"update_policy": "master_locked",
-			"reconciliation_attcode": "name",
-			"finalclass": "SynchroAttExtKey",
+			"finalclass": "SynchroAttribute",
 			"friendlyname": "org_id"
 		},
 		{
@@ -156,7 +155,7 @@
 			"attcode": "status",
 			"update": "1",
 			"reconcile": "0",
-			"update_policy": "write_if_empty",
+			"update_policy": "master_unlocked",
 			"finalclass": "SynchroAttribute",
 			"friendlyname": "status"
 		},
@@ -173,7 +172,7 @@
 			"attcode": "usage_id",
 			"update": "0",
 			"reconcile": "0",
-			"update_policy": "master_unlocked",
+			"update_policy": "write_if_empty",
 			"reconciliation_attcode": "",
 			"finalclass": "SynchroAttExtKey",
 			"friendlyname": "usage_id"

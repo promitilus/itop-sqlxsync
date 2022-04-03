@@ -108,9 +108,8 @@
 			"attcode": "org_id",
 			"update": "1",
 			"reconcile": "0",
-			"update_policy": "write_if_empty",
-			"reconciliation_attcode": "name",
-			"finalclass": "SynchroAttExtKey",
+			"update_policy": "master_locked",
+			"finalclass": "SynchroAttribute",
 			"friendlyname": "org_id"
 		},
 		{
@@ -149,9 +148,8 @@
 			"attcode": "location_id",
 			"update": "1",
 			"reconcile": "0",
-			"update_policy": "write_if_empty",
-			"reconciliation_attcode": "name",
-			"finalclass": "SynchroAttExtKey",
+			"update_policy": "master_locked",
+			"finalclass": "SynchroAttribute",
 			"friendlyname": "location_id"
 		},
 		{

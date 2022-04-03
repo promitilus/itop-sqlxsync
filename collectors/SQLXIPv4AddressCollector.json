@@ -68,7 +68,7 @@
 			"attcode": "domain_id",
 			"update": "1",
 			"reconcile": "0",
-			"update_policy": "write_if_empty",
+			"update_policy": "master_locked",
 			"reconciliation_attcode": "friendlyname",
 			"finalclass": "SynchroAttExtKey",
 			"friendlyname": "domain_id"
@@ -106,8 +106,7 @@
 			"update": "1",
 			"reconcile": "0",
 			"update_policy": "master_locked",
-			"reconciliation_attcode": "friendlyname",
-			"finalclass": "SynchroAttExtKey",
+			"finalclass": "SynchroAttribute",
 			"friendlyname": "org_id"
 		},
 		{
@@ -140,7 +139,7 @@
 			"attcode": "short_name",
 			"update": "1",
 			"reconcile": "0",
-			"update_policy": "write_if_empty",
+			"update_policy": "master_locked",
 			"finalclass": "SynchroAttribute",
 			"friendlyname": "short_name"
 		},
