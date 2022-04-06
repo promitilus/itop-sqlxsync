@@ -222,14 +222,12 @@ class Orchestrator
 		/** @var \Collector $oCollector */
 		foreach($aCollectors as $oCollector)
 		{
-			Utils::SetCollector($oCollector, "InitSynchroDataSource");
 			$bResult = $oCollector->InitSynchroDataSource($aPlaceholders);
 			if (!$bResult)
 			{
 				break;
 			}
 		}
-		Utils::SetCollector(null);
 		return $bResult;
 	}
 	
@@ -246,17 +244,15 @@ class Orchestrator
 		/** @var \Collector $oCollector */
 		foreach($aCollectors as $oCollector)
 		{
-			Utils::SetCollector($oCollector, "Collect");
 			$bResult = $oCollector->Collect($iMaxChunkSize, $bCollectOnly);
 			if (!$bResult)
 			{
 				break;
 			}
 		}
-		Utils::SetCollector(null);
 		return $bResult;
 	}
-
+	
 	/**
 	 * Run the final pass of the collection: synchronizing the data into iTop
 	 * @param string[] $aCollectors list of classes implementing {@link Collector}
@@ -274,7 +270,6 @@ class Orchestrator
 		/** @var \Collector $oCollector */
 		foreach($aCollectors as $oCollector)
 		{
-			Utils::SetCollector($oCollector, "Synchronize");
 			$bResult = $oCollector->Synchronize();
 			if (!$bResult)
 			{
@@ -289,7 +284,6 @@ class Orchestrator
 				}
 			}
 		}
-		Utils::SetCollector(null);
 		return $bResult;
 	}
 	
