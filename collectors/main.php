@@ -1,5 +1,6 @@
 <?php
 
+require_once(APPROOT.'collectors/SQLXCollectorConfig.class.inc.php');
 require_once(APPROOT.'collectors/SQLXCollector.class.inc.php');
 
 require_once(APPROOT.'collectors/SQLXBrandCollector.class.inc.php');
