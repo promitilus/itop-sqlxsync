@@ -22,7 +22,7 @@ class SQLXCollectorConfig extends Utils {
 			$data = yaml_parse_file($cfg);
 			if (!$data)
 				throw new Exception("Failed to parse file $cfg");
-			$config = array_merge($config, $data);
+			$config = array_merge_recursive($config, $data);
 		}
 
 		if (isset($_SERVER['SQL_COLLECTOR_LIST']) && $_SERVER['SQL_COLLECTOR_LIST']) {
