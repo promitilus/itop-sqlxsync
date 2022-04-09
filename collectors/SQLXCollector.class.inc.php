@@ -78,9 +78,13 @@ abstract class SQLXCollector extends Collector
 			$item['__values'] = count(array_filter(array_values($item), function ($v) { return empty($v) ? NULL : $v; }));
 		});
 
+		$pkeys = array_column($data, 'primary_key');
+		if (!$pkeys || count($pkeys) === 0 || count($pkeys) !== count($data)) {
+			Utils::Log(LOG_WARNING, sprintf("Missing 'primary_key' field in query %s", $this->name));
+		}
+
 		// sort by key, and count of values
-		array_multisort(array_column($data, 'primary_key'), SORT_ASC,
-			array_column($data, '__values'), SORT_DESC, $data);
+		array_multisort($pkeys, SORT_ASC, array_column($data, '__values'), SORT_DESC, $data);
 		SQLXCollectorConfig::setCollectorCache($this->name, $data);
 		return $data;
 	}
