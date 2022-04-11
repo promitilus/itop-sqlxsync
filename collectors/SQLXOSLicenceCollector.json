@@ -21,7 +21,8 @@
 			"update": "1",
 			"reconcile": "1",
 			"update_policy": "master_locked",
-			"finalclass": "SynchroAttribute",
+			"reconciliation_attcode": "id",
+			"finalclass": "SynchroAttExtKey",
 			"friendlyname": "org_id"
 		},
 		{

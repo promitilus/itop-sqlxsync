@@ -154,7 +154,8 @@
 			"update": "1",
 			"reconcile": "0",
 			"update_policy": "master_locked",
-			"finalclass": "SynchroAttribute",
+			"reconciliation_attcode": "id",
+			"finalclass": "SynchroAttExtKey",
 			"friendlyname": "location_id"
 		},
 		{
@@ -234,7 +235,8 @@
 			"update": "1",
 			"reconcile": "0",
 			"update_policy": "master_locked",
-			"finalclass": "SynchroAttribute",
+			"reconciliation_attcode": "id",
+			"finalclass": "SynchroAttExtKey",
 			"friendlyname": "org_id"
 		},
 		{

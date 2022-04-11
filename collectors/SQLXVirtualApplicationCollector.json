@@ -17,9 +17,17 @@
 	"delete_policy_retention": "1728000",
 	"attribute_list": [
 		{
-			"attcode": "name",
+			"attcode": "USKC",
 			"update": "1",
 			"reconcile": "1",
+			"update_policy": "master_locked",
+			"finalclass": "SynchroAttribute",
+			"friendlyname": "USKC"
+		},
+		{
+			"attcode": "name",
+			"update": "1",
+			"reconcile": "0",
 			"update_policy": "master_locked",
 			"finalclass": "SynchroAttribute",
 			"friendlyname": "name"
@@ -27,9 +35,10 @@
 		{
 			"attcode": "org_id",
 			"update": "1",
-			"reconcile": "1",
+			"reconcile": "0",
 			"update_policy": "master_locked",
-			"finalclass": "SynchroAttribute",
+			"reconciliation_attcode": "id",
+			"finalclass": "SynchroAttExtKey",
 			"friendlyname": "org_id"
 		},
 		{

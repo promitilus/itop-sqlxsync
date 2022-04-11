@@ -5,9 +5,13 @@ DN=`dirname $0`;
 
 arg_list=0;
 arg_all=0;
+arg_dump_config=0;
+arg_configure=0;
 arg_collect=0;
 arg_synchro=0;
 arg_sources=();
+arg_verbose=0;
+arg_chunk_size=500;
 arg_process='';
 arg_lock_wait=1800;
 for arg in "$@";
@@ -26,12 +30,28 @@ do
 			echo "       $BN <source-name> [ --collect | --synchro ]" >&2;
 			exit 1;
 			;;
+		"-D" | "--dump-config" )
+			arg_dump_config=1;
+			shift;
+			;;
+		"-C" | "--configure" )
+			arg_configure=1;
+			shift;
+			;;
 		"-c" | "--collect" )
 			arg_collect=1;
 			shift;
 			;;
 		"-s" | "--sync" | "--synchro" )
 			arg_synchro=1;
+			shift;
+			;;
+		"-v" | "--verbose" )
+			arg_verbose=$(($arg_verbose + 1));
+			shift;
+			;;
+		--chunk-size=* )
+			arg_chunk_size="${arg#--chunk-size=}";
 			shift;
 			;;
 		--wait=* )
@@ -105,10 +125,17 @@ then
 	exit 1;
 fi;
 
-if [ "$arg_collect" = "1" ] && [ "$arg_synchro" != "1" ];
+## RUN MODE
+if [ "$arg_dump_config" = "1" ];
+then
+	ARGS+=("--dump_config_only");
+elif [ "$arg_configure" = "1" ];
+then
+	ARGS+=("--configure_only");
+elif [ "$arg_collect" = "1" ];
 then
 	ARGS+=("--collect_only");
-elif [ "$arg_synchro" = "1" ] && [ "$arg_collect" != "1" ];
+elif [ "$arg_synchro" = "1" ];
 then
 	ARGS+=("--synchro_only");
 fi;
@@ -122,5 +149,5 @@ do
 	export ARG_SYNCHRO="$arg_synchro";
 	export ARG_COLLECT="$arg_collect";
 
-	flock -w "$arg_lock_wait" "$LOCK_FILE" $0 ---PROCESS "$src" "${ARGS[@]}";
+	flock -w "$arg_lock_wait" "$LOCK_FILE" $0 ---PROCESS "$src" "${ARGS[@]}" --console_log_level=$arg_verbose --max_chunk_size=$arg_chunk_size;
 done;
