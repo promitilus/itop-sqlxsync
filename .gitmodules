@@ -1,0 +1,3 @@
+[submodule "itop-data-collector-base"]
+	path = itop-data-collector-base
+	url = https://github.com/Combodo/itop-data-collector-base
