@@ -12,6 +12,8 @@ class SQLXCollectorConfig extends Utils {
 
 	public static function loadConfig() {
 		$cfg = APPROOT . '/conf/' . 'config.yaml';
+		if (file_exists(APPROOT . '/conf/' . 'config-local.yaml'))
+			$cfg .= ';' . APPROOT . '/conf/' . 'config-local.yaml';
 
 		if (isset($_SERVER['SQL_COLLECTOR_CONFIG']))
 			$cfg = $_SERVER['SQL_COLLECTOR_CONFIG'];
@@ -19,9 +21,9 @@ class SQLXCollectorConfig extends Utils {
 		$files = explode(';', $cfg);
 		$config = array();
 		foreach ($files as $file) {
-			$data = yaml_parse_file($cfg);
+			$data = yaml_parse_file($file);
 			if (!$data)
-				throw new Exception("Failed to parse file $cfg");
+				throw new Exception("Failed to parse file $file");
 			$config = array_merge_recursive($config, $data);
 		}
 
@@ -61,11 +63,23 @@ class SQLXCollectorConfig extends Utils {
 		return static::$config['sources'][$name];
 	}
 
+	public static function getDefaults() {
+		if (isset(static::$config['defaults']))
+			static::$config['defaults'];
+		return array();
+	}
+
 	public static function getPlaceholders() {
 		if (isset(static::$config['placeholders']))
 			static::$config['placeholders'];
 		return array();
 	}
+
+        public static function getOptionalAttributes() {
+		if (isset(static::$config['global']['optional-attributes']))
+			static::$config['global']['optional-attributes'];
+		return array();
+        }
 
         public static function getQueries($name) {
 		if (!isset(static::$config['queries'][$name]))

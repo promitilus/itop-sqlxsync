@@ -54,7 +54,7 @@ abstract class SQLXCollector extends Collector
 
 		// build SQL
 		$sql = $this->query['sql'];
-		$defaults = $this->config['defaults'] ?? array();
+		$defaults = array_merge(SQLXCollectorConfig::getDefaults(), $this->config['defaults'] ?? array());
 		$vars = array_merge($defaults, $this->config['vars']);
 		if (!isset($vars['SOURCE']))
 			$vars['SOURCE'] = SQLXCollectorConfig::getName();
@@ -169,8 +169,20 @@ abstract class SQLXCollector extends Collector
 	}
 
 	public function AttributeIsOptional($sAttCode) {
-		if (preg_match('/monitoring(ip)?_/', $sAttCode))
-			return true;
+		$atts = SQLXCollectorConfig::getOptionalAttributes();
+		foreach ($atts as $att) {
+			// if $att begins with '/' its regex
+			if (substr($att, 0, 1) === '/') {
+				$val = @preg_match($att, $sAttCode);
+				if ($val === false) {
+					Utils::Log(LOG_INFO, sprintf("Invalid optional attribute regex '%s'", $att));
+					return false;
+				} elseif ($val == 1)
+					return true;
+			} elseif ($att == $sAttCode) {
+				return true;
+			}
+		}
 		return parent::AttributeIsOptional($sAttCode);
 	}
 }
