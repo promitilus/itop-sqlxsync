@@ -1,1 +1,6 @@
-itop-data-collector-base/exec.php
+<?php
+
+define('APPROOT', dirname(__FILE__).'/');
+
+include "itop-data-collector-base/exec.php";
+

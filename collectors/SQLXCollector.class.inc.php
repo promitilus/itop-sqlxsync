@@ -69,7 +69,7 @@ abstract class SQLXCollector extends Collector
 				if (isset($vars[$key]))
 					return $vars[$key];
 				return $key;
-			});
+			}, $val);
 			$sql = str_replace($match, $val, $sql);
 		}
 

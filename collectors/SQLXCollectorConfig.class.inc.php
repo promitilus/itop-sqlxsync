@@ -65,19 +65,19 @@ class SQLXCollectorConfig extends Utils {
 
 	public static function getDefaults() {
 		if (isset(static::$config['defaults']))
-			static::$config['defaults'];
+			return static::$config['defaults'];
 		return array();
 	}
 
 	public static function getPlaceholders() {
 		if (isset(static::$config['placeholders']))
-			static::$config['placeholders'];
+			return static::$config['placeholders'];
 		return array();
 	}
 
         public static function getOptionalAttributes() {
 		if (isset(static::$config['global']['optional-attributes']))
-			static::$config['global']['optional-attributes'];
+			return static::$config['global']['optional-attributes'];
 		return array();
         }
 
