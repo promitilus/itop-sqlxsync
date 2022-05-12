@@ -58,9 +58,18 @@ abstract class SQLXCollector extends Collector
 		$vars = array_merge($defaults, $this->config['vars']);
 		if (!isset($vars['SOURCE']))
 			$vars['SOURCE'] = SQLXCollectorConfig::getName();
+
+		// replace %VARIABLE%s
 		foreach ($vars as $key => $val) {
 			//$match = preg_quote("%$key%");
 			$match = "%$key%";
+
+			$val = preg_replace_callback('/%(\w+?)%/', function ($matches) {
+				$key = $matches[1];
+				if (isset($vars[$key]))
+					return $vars[$key];
+				return $key;
+			});
 			$sql = str_replace($match, $val, $sql);
 		}
 
