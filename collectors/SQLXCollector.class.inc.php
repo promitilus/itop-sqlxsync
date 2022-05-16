@@ -61,7 +61,6 @@ abstract class SQLXCollector extends Collector
 
 		// replace %VARIABLE%s
 		foreach ($vars as $key => $val) {
-			//$match = preg_quote("%$key%");
 			$match = "%$key%";
 
 			$val = preg_replace_callback('/%(\w+?)%/', function ($matches) {
@@ -74,9 +73,11 @@ abstract class SQLXCollector extends Collector
 		}
 
 		Utils::Log(LOG_INFO, sprintf("Loading data for collector %s", $this->name));
-		//print("$sql\n");
-		$res = $dbh->query($sql);
-		if (!$res && $dbh->errorInfo()) {
+		try {
+			$res = $dbh->query($sql);
+		} catch (Exception $e) {
+			Utils::Log(LOG_ERR, "Failed to execute query");
+			Utils::Log(LOG_DEBUG, sprintf("---\n%s\n---", $sql));
 			print_r($dbh->errorInfo());
 			throw new Exception("Query failed with " . $dbh->errorCode());
 		}
