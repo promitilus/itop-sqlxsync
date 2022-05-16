@@ -63,7 +63,7 @@ abstract class SQLXCollector extends Collector
 		foreach ($vars as $key => $val) {
 			$match = "%$key%";
 
-			$val = preg_replace_callback('/%(\w+?)%/', function ($matches) {
+			$val = preg_replace_callback('/%(\w+?)%/', function ($matches) use ($vars) {
 				$key = $matches[1];
 				if (isset($vars[$key]))
 					return $vars[$key];
