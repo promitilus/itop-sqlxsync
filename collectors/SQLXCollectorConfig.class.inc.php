@@ -12,8 +12,9 @@ class SQLXCollectorConfig extends Utils {
 
 	public static function loadConfig() {
 		$cfg = APPROOT . '/conf/' . 'config.yaml';
-		if (file_exists(APPROOT . '/conf/' . 'config-local.yaml'))
-			$cfg .= ';' . APPROOT . '/conf/' . 'config-local.yaml';
+		$cfg_local = APPROOT . '/conf/' . 'config-local.yaml';
+		if (file_exists($cfg_local))
+			$cfg .= ';' . $cfg_local;
 
 		if (isset($_SERVER['SQL_COLLECTOR_CONFIG']))
 			$cfg = $_SERVER['SQL_COLLECTOR_CONFIG'];
