@@ -55,7 +55,7 @@ abstract class SQLXCollector extends Collector
 		// build SQL
 		$sql = $this->query['sql'];
 		$defaults = array_merge(SQLXCollectorConfig::getDefaults(), $this->config['defaults'] ?? array());
-		$vars = array_merge($defaults, $this->config['vars']);
+		$vars = array_merge($defaults, $this->config['vars'], $this->query['vars'] ?? array());
 		if (!isset($vars['SOURCE']))
 			$vars['SOURCE'] = SQLXCollectorConfig::getName();
 
