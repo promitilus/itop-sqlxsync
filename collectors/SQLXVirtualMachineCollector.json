@@ -164,13 +164,13 @@
 			"friendlyname": "virtualmachinetype_id"
 		},
 		{
-			"attcode": "virtualmachineoperationmode_id",
+			"attcode": "virtualmachineusage_id",
 			"update": "1",
 			"reconcile": "0",
 			"update_policy": "master_locked",
-			"reconciliation_attcode": "name",
+			"reconciliation_attcode": "code",
 			"finalclass": "SynchroAttExtKey",
-			"friendlyname": "virtualmachineoperationmode_id"
+			"friendlyname": "virtualmachineusage_id"
 		},
 		{
 			"attcode": "osfamily_id",
