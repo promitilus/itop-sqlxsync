@@ -28,6 +28,15 @@ require_once(APPROOT.'collectors/SQLXlnkApplicationSolutionToFunctionalCICollect
 require_once(APPROOT.'collectors/SQLXHardDiskTypeCollector.class.inc.php');
 require_once(APPROOT.'collectors/SQLXHardDiskCollector.class.inc.php');
 
+require_once(APPROOT.'collectors/SQLXDomainCollector.class.inc.php');
+require_once(APPROOT.'collectors/SQLXARecordCollector.class.inc.php');
+require_once(APPROOT.'collectors/SQLXAAAARecordCollector.class.inc.php');
+require_once(APPROOT.'collectors/SQLXCNAMERecordCollector.class.inc.php');
+require_once(APPROOT.'collectors/SQLXNSRecordCollector.class.inc.php');
+require_once(APPROOT.'collectors/SQLXMXRecordCollector.class.inc.php');
+require_once(APPROOT.'collectors/SQLXSRVRecordCollector.class.inc.php');
+require_once(APPROOT.'collectors/SQLXTXTRecordCollector.class.inc.php');
+
 // Register the collectors (one collector class per data synchro task to run)
 // and tell the orchestrator in which order to run them
 
