@@ -28,6 +28,7 @@ require_once(APPROOT.'collectors/SQLXlnkApplicationSolutionToFunctionalCICollect
 require_once(APPROOT.'collectors/SQLXHardDiskTypeCollector.class.inc.php');
 require_once(APPROOT.'collectors/SQLXHardDiskCollector.class.inc.php');
 
+require_once(APPROOT.'collectors/SQLXZoneCollector.class.inc.php');
 require_once(APPROOT.'collectors/SQLXDomainCollector.class.inc.php');
 require_once(APPROOT.'collectors/SQLXARecordCollector.class.inc.php');
 require_once(APPROOT.'collectors/SQLXAAAARecordCollector.class.inc.php');
