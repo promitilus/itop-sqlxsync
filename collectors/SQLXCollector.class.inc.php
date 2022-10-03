@@ -48,6 +48,8 @@ abstract class SQLXCollector extends Collector
 		return $dbh;
 	}
 
+
+
 	protected function loadData($dbh) {
 		if (SQLXCollectorConfig::getCollectorCache($this->name))
 			return SQLXCollectorConfig::getCollectorCache($this->name);
@@ -59,25 +61,46 @@ abstract class SQLXCollector extends Collector
 		if (!isset($vars['SOURCE']))
 			$vars['SOURCE'] = SQLXCollectorConfig::getName();
 
-		// replace %VARIABLE%s
-		foreach ($vars as $key => $val) {
-			$match = "%$key%";
+		$replace_vars = function ($matches) use ($vars) {
+			$key = $matches[1];
+			$str = "%-$key-%";
 
-			$val = preg_replace_callback('/%(\w+?)%/', function ($matches) use ($vars) {
-				$key = $matches[1];
-				if (isset($vars[$key]))
-					return $vars[$key];
-				return $key;
-			}, $val);
-			$sql = str_replace($match, $val, $sql);
-		}
+			if (!isset($vars[$key]))
+				return $str;
+			$str = $vars[$key];
+
+			foreach ($vars as $key => $val)
+				$str = str_replace("%$key%", $val, $str);
+
+			return $str;
+		};
+		$replace_macro = function ($matches) use ($vars) {
+			$key = $matches[1];
+			$str = "%-$key-%";
+
+			if (!isset($vars[$key]))
+				return $str;
+
+			$str = str_replace('$1', $matches[2], $vars[$key]);
+
+			foreach ($vars as $key => $val)
+				$str = str_replace("%$key%", $val, $str);
+
+			return $str;
+		};
+
+		// replace %VARIABLE%s and %MACRO($1)%s
+		$sql = preg_replace_callback_array([
+			'/%(\w+?)%/'		=> $replace_vars,
+			'/%(\w+?)\((\S+?)\)%/' 	=> $replace_macro,
+		], $sql);
 
 		Utils::Log(LOG_INFO, sprintf("Loading data for collector %s", $this->name));
+		Utils::Log(LOG_DEBUG, sprintf("---\n%s\n---", $sql));
 		try {
 			$res = $dbh->query($sql);
 		} catch (Exception $e) {
 			Utils::Log(LOG_ERR, "Failed to execute query");
-			Utils::Log(LOG_DEBUG, sprintf("---\n%s\n---", $sql));
 			print_r($dbh->errorInfo());
 			throw new Exception("Query failed with " . $dbh->errorCode());
 		}
@@ -94,7 +117,7 @@ abstract class SQLXCollector extends Collector
 		}
 
 		// sort by key, and count of values
-		array_multisort($pkeys, SORT_ASC, array_column($data, '__values'), SORT_DESC, $data);
+		@array_multisort($pkeys, SORT_ASC, array_column($data, '__values'), SORT_DESC, $data);
 		SQLXCollectorConfig::setCollectorCache($this->name, $data);
 		return $data;
 	}

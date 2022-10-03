@@ -14,6 +14,7 @@ arg_verbose=0;
 arg_chunk_size=500;
 arg_process='';
 arg_lock_wait=1800;
+arg_config_file=;
 for arg in "$@";
 do
 	case "$arg" in
@@ -48,6 +49,10 @@ do
 			;;
 		"-v" | "--verbose" )
 			arg_verbose=$(($arg_verbose + 1));
+			shift;
+			;;
+		--config-file=* )
+			arg_config_file="${arg#--config-file=}";
 			shift;
 			;;
 		--chunk-size=* )
@@ -138,6 +143,12 @@ then
 elif [ "$arg_synchro" = "1" ];
 then
 	ARGS+=("--synchro_only");
+fi;
+
+## CONFIG FILE
+if [ -n "$arg_config_file" ];
+then
+	export SQL_COLLECTOR_CONFIG="$arg_config_file";
 fi;
 
 # process
