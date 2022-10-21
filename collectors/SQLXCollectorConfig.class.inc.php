@@ -29,11 +29,13 @@ class SQLXCollectorConfig extends Utils {
 		}
 
 		if (isset($_SERVER['SQL_COLLECTOR_LIST']) && $_SERVER['SQL_COLLECTOR_LIST']) {
+			$sep = $_SERVER['SQL_COLLECTOR_LIST_SEPARATOR'] ?? "\n";
+
 			$keys = array_keys($config['sources']);
 			foreach ($keys as $key) {
 				if (isset($config['sources'][$key]['disable']) && $config['sources'][$key]['disable'])
 					continue;
-				print("$key\n");
+				print($key . $sep);
 			}
 			exit(0);
 		}
