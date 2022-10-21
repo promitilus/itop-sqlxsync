@@ -91,8 +91,8 @@ abstract class SQLXCollector extends Collector
 
 		// replace %VARIABLE%s and %MACRO($1)%s
 		$sql = preg_replace_callback_array([
-			'/%(\w+?)%/'		=> $replace_vars,
-			'/%(\w+?)\((\S+?)\)%/' 	=> $replace_macro,
+			'/%([\w-]+?)%/'			=> $replace_vars,
+			'/%([\w-]+?)\((\S+?)\)%/' 	=> $replace_macro,
 		], $sql);
 
 		Utils::Log(LOG_INFO, sprintf("Loading data for collector %s", $this->name));
